@@ -67,7 +67,7 @@ export class WeatherResponse {
   @Type(() => Geolocation)
   coord?: Geolocation;
   @Type(() => Weather)
-  weather?: Weather;
+  weather?: Weather[];
   base?: string;
   @Type(() => MainWeatherParams)
   main?: MainWeatherParams;
