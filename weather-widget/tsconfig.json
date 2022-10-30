@@ -19,12 +19,7 @@
     "lib": [
       "es2018",
       "dom"
-    ],
-    "paths": {
-      "core-js/es7/reflect": [
-        "./node_modules/core-js/proposals/reflect-metadata.js"
-      ]
-    }
+    ]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

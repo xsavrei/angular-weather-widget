@@ -4,6 +4,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HttpClientModule } from "@angular/common/http";
+import { GooglePlaceModule } from "ngx-google-places-autocomplete";
+import { NgOptimizedImage } from "@angular/common";
 
 @NgModule({
   declarations: [
@@ -12,9 +14,11 @@ import { HttpClientModule } from "@angular/common/http";
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    GooglePlaceModule,
+    NgOptimizedImage
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs/operators";
 import { plainToInstance } from "class-transformer";
@@ -14,6 +14,9 @@ export class AppComponent {
 
   res?: WeatherResponse;
   sunrise?: Date;
+  userAddress: string = ''
+  userLatitude: string = ''
+  userLongitude: string = ''
 
   constructor(private http: HttpClient,
               private geolocationService: GeolocationService) {
@@ -29,4 +32,11 @@ export class AppComponent {
       });
     }).catch(console.warn)
   }
+
+  handleAddressChange(address: any) {
+    this.userAddress = address.formatted_address
+    this.userLatitude = address.geometry.location.lat()
+    this.userLongitude = address.geometry.location.lng()
+  }
+
 }

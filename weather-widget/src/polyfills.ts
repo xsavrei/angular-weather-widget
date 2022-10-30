@@ -52,5 +52,4 @@ import 'zone.js';  // Included with Angular CLI.
  * APPLICATION IMPORTS
  */
 // For class-transformer and Reflect.getMetadata
-// For this to work, it was necessary to add paths value to tsconfig.
-import 'core-js/es7/reflect';
+import 'reflect-metadata';

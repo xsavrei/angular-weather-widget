@@ -1,4 +1,6 @@
 <pre>{{ res | json }}</pre>
 <div>{{ 'sunset is at: ' + sunrise }}</div>
 
-<input  >
+<input ngx-google-places-autocomplete (onAddressChange)="handleAddressChange($event)">
+{{ userLongitude }}
+{{ userLatitude }}
