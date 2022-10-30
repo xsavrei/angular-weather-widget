@@ -1,0 +1,24 @@
+<ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0" *ngIf="weather">
+  <ngb-panel>
+    <ng-template ngbPanelHeader>
+      <button ngbPanelToggle class="accordion-button p-0"> &#9733;
+        <div class="d-flex flex-row justify-content-between ms-1" style="width: 100%; align-content: center">
+          <div class="align-self-center ms-1">{{ weather.main?.temp?.toPrecision(2) + '&#8451;' }}</div>
+          <div class="align-self-center">{{ weather.name }}</div>
+          <div *ngFor="let description of weather.weather">
+            {{ description.description }}
+            <app-image [imageSource]="description.icon"></app-image>
+          </div>
+        </div>
+      </button>
+    </ng-template>
+    <ng-template ngbPanelContent>
+      <ul *ngIf="weather.main" class="mb-0">
+        <li>Feels like: {{ weather.main.feels_like }}</li>
+        <li>Pressure: {{ weather.main.pressure }}</li>
+        <li>Temperature min: {{ weather.main.temp_min }}</li>
+        <li>Temperature max: {{ weather.main.temp_max }}</li>
+      </ul>
+    </ng-template>
+  </ngb-panel>
+</ngb-accordion>
