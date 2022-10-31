@@ -1,8 +1,11 @@
 <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0" *ngIf="weather">
   <ngb-panel>
     <ng-template ngbPanelHeader>
-      <button ngbPanelToggle class="accordion-button p-0"> &#9733;
-        <div class="d-flex flex-row justify-content-between ms-1" style="width: 100%; align-content: center">
+      <div style="cursor: pointer; position: absolute; z-index: 100; font-size: larger"
+           (click)="onFavouriteClick()"
+           [ngStyle]="favourite ? {'color': 'gold'} : {'color': 'black'}">&#9733;</div>
+      <button ngbPanelToggle class="accordion-button p-0">
+        <div class="d-flex flex-row justify-content-between ms-2 p-1" style="width: 100%; align-content: center">
           <div class="align-self-center ms-1">{{ weather.main?.temp?.toPrecision(2) + '&#8451;' }}</div>
           <div class="align-self-center">{{ weather.name }}</div>
           <div *ngFor="let description of weather.weather">

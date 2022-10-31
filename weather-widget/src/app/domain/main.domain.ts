@@ -6,16 +6,16 @@ export class Weather {
   description?: string;
   icon?: string;
 
-  constructor(copy?: Weather) {
+  constructor(copy?: Partial<Weather>) {
     Object.assign(this, copy);
   }
 }
 
-export class Geolocation {
+export class CustomGeolocation {
   lon?: number;
   lat?: number;
 
-  constructor(copy?: Geolocation) {
+  constructor(copy?: CustomGeolocation) {
     Object.assign(this, copy);
   }
 }
@@ -64,8 +64,8 @@ export class System {
 }
 
 export class WeatherResponse {
-  @Type(() => Geolocation)
-  coord?: Geolocation;
+  @Type(() => CustomGeolocation)
+  coord?: CustomGeolocation;
   @Type(() => Weather)
   weather?: Weather[];
   base?: string;
@@ -83,6 +83,7 @@ export class WeatherResponse {
   id?: number;
   name?: string;
   cod?: string;
+  favourite?: boolean;
 
   constructor(copy?: WeatherResponse) {
     Object.assign(this, copy);

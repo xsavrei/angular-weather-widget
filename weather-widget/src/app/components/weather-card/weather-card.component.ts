@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { WeatherResponse } from "../../domain";
 
 @Component({
@@ -6,14 +6,21 @@ import { WeatherResponse } from "../../domain";
   templateUrl: './weather-card.component.html',
   styleUrls: ['./weather-card.component.scss']
 })
-export class WeatherCardComponent implements OnInit {
+export class WeatherCardComponent {
 
   @Input()
   weather?: WeatherResponse | null;
 
-  constructor() { }
+  @Output()
+  favouriteChange = new EventEmitter<WeatherResponse>();
 
-  ngOnInit(): void {
+  favourite?: boolean = false;
+
+  onFavouriteClick() {
+    this.favourite = !this.favourite;
+    if (this.weather) {
+      this.weather.favourite = this.favourite;
+      this.favouriteChange.emit(this.weather)
+    }
   }
-
 }
