@@ -1,27 +1,35 @@
 <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0" *ngIf="weather">
   <ngb-panel>
     <ng-template ngbPanelHeader>
-      <div style="cursor: pointer; position: absolute; z-index: 100; font-size: larger"
-           (click)="onFavouriteClick()"
-           [ngStyle]="favourite ? {'color': 'gold'} : {'color': 'black'}">&#9733;</div>
+      <div style=" position: absolute; z-index: 100; font-size: larger"
+           [ngStyle]="weather.favourite ? {'color': 'gold'} : {'display': 'none'}">&#9733;
+      </div>
       <button ngbPanelToggle class="accordion-button p-0">
         <div class="d-flex flex-row justify-content-between ms-2 p-1" style="width: 100%; align-content: center">
           <div class="align-self-center ms-1">{{ weather.main?.temp?.toPrecision(2) + '&#8451;' }}</div>
           <div class="align-self-center">{{ weather.name }}</div>
           <div *ngFor="let description of weather.weather">
             {{ description.description }}
-            <app-image [imageSource]="description.icon"></app-image>
           </div>
+          <app-image [imageSource]="weather.weather?.[0]?.icon"></app-image>
         </div>
       </button>
     </ng-template>
     <ng-template ngbPanelContent>
-      <ul *ngIf="weather.main" class="mb-0">
-        <li>Feels like: {{ weather.main.feels_like }}</li>
-        <li>Pressure: {{ weather.main.pressure }}</li>
-        <li>Temperature min: {{ weather.main.temp_min }}</li>
-        <li>Temperature max: {{ weather.main.temp_max }}</li>
-      </ul>
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <ul *ngIf="weather.main" class="mb-0">
+            <li>Feels like: {{ weather.main.feels_like }}</li>
+            <li>Pressure: {{ weather.main.pressure }}</li>
+            <li>Temperature min: {{ weather.main.temp_min }}</li>
+            <li>Temperature max: {{ weather.main.temp_max }}</li>
+          </ul>
+        </div>
+        <div class="col-12 col-md-6">
+          <div>Sunrise: {{ sunrise }}</div>
+          <div>Sunset: {{ sunset }}</div>
+        </div>
+      </div>
     </ng-template>
   </ngb-panel>
 </ngb-accordion>

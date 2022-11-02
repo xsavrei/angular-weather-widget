@@ -1,8 +1,10 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ApiService } from "../../services/api.service";
 import { GeolocationService } from "../../services/geolocation.service";
-import { Observable, of } from "rxjs";
-import { Clouds, CustomGeolocation, MainWeatherParams, System, Weather, WeatherResponse, Wind } from "../../domain";
+import { Observable } from "rxjs";
+import { CustomGeolocation, WeatherResponse } from "../../domain";
+import { IdbService } from "../../services/idb.service";
+import { map } from "rxjs/operators";
 
 @Component({
   selector: 'app-main-page',
@@ -16,20 +18,32 @@ export class MainPageComponent {
   page: number = 1;
   pageSize: number = 5;
 
+  currentTimestamp = new Date().getTime();
+
   @ViewChild('googleSearch')
   el?: ElementRef;
 
   constructor(private api: ApiService,
-              private geolocationService: GeolocationService) {
-    this.getCitiesListMock();
-    // geolocationService.getLocationOnce().then(geolocation => {
-    //   const weatherResponse$ = this.api.getWeatherByCoords({
-    //     lat: geolocation.coords.latitude,
-    //     lon: geolocation.coords.longitude
-    //   });
-    //   this.citiesList.push(weatherResponse$);
-    //   console.log(this.citiesList)
-    // }).catch(console.warn);
+              private geolocationService: GeolocationService,
+              private idb: IdbService) {
+    let weatherResponse$: Observable<WeatherResponse>;
+    this.idb.getValue('geolocation').then(resolved => {
+
+      geolocationService.getLocationOnce().then(geolocation => {
+
+        const geo: CustomGeolocation = new CustomGeolocation({
+          lat: geolocation.coords.latitude,
+          lon: geolocation.coords.longitude,
+          timestamp: geolocation.timestamp
+        });
+        this.idb.insertGeoValue('geolocation', geo);
+        weatherResponse$ = this.api.getWeatherByCoords(geo);
+        this.citiesList.push(weatherResponse$.pipe(map((weatherResponse: WeatherResponse) => {
+          return { ...weatherResponse, favourite: true }
+        })));
+
+      }).catch(console.warn);
+    });
   }
 
   onAddressChange(address: any) {
@@ -46,38 +60,45 @@ export class MainPageComponent {
     }
   }
 
-  getCitiesListMock() {
-    let mock = new WeatherResponse({
-      weather: new Array<Weather>(new Weather({
-        id: 1,
-        main: 'main',
-        description: 'description',
-        icon: 'assets/loading.gif'
-      })),
-      coord: new CustomGeolocation({
-        lat: 15,
-        lon: 45,
-      }),
-      base: 'base',
-      main: new MainWeatherParams({
-        temp: 15,
-        feels_like: 17,
-        temp_max: 20,
-        temp_min: 12,
-        pressure: 1000
-      }),
-      visibility: 10000,
-      wind: new Wind(),
-      clouds: new Clouds(),
-      dt: 10,
-      sys: new System(),
-      timezone: 3600,
-      name: 'cityName',
-      cod: '200'
-    });
-    for (let i = 0; i < 5; i++) {
-      this.citiesList.push(of({ ...mock, name: 'cityName' + i }));
-    }
-    return this.citiesList
+//FOR DEVELOPMENT
+  /* getCitiesListMock() {
+     let mock = new WeatherResponse({
+       weather: new Array<Weather>(new Weather({
+         id: 1,
+         main: 'main',
+         description: 'description',
+         icon: 'assets/loading.gif'
+       })),
+       coord: new CustomGeolocation({
+         lat: 15,
+         lon: 45,
+       }),
+       base: 'base',
+       main: new MainWeatherParams({
+         temp: 15,
+         feels_like: 17,
+         temp_max: 20,
+         temp_min: 12,
+         pressure: 1000
+       }),
+       visibility: 10000,
+       wind: new Wind(),
+       clouds: new Clouds(),
+       dt: 10,
+       sys: new System(),
+       timezone: 3600,
+       name: 'cityName',
+       cod: '200'
+     });
+     for (let i = 0; i < 5; i++) {
+       const mockDiffName = { ...mock, name: 'cityName' + i };
+       this.citiesList.push(of(mockDiffName));
+     }
+     return this.citiesList
+   }*/
+
+  onDeleteClick() {
+    this.idb.deleteDb();
+    location.reload();
   }
 }

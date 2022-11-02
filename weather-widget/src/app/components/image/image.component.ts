@@ -1,11 +1,11 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'app-image',
   templateUrl: './image.component.html',
   styleUrls: ['./image.component.scss']
 })
-export class ImageComponent implements OnChanges{
+export class ImageComponent implements OnChanges {
 
   @Input()
   imageSource?: string
@@ -13,7 +13,7 @@ export class ImageComponent implements OnChanges{
   altText?: string;
 
   ngOnChanges(changes: SimpleChanges): void {
-    if(!changes.imageSource.currentValue){
+    if (!changes.imageSource.currentValue) {
       this.altText = 'No image'
     }
   }
