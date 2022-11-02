@@ -14,6 +14,7 @@ export class Weather {
 export class CustomGeolocation {
   lon?: number;
   lat?: number;
+  timestamp?: number;
 
   constructor(copy?: CustomGeolocation) {
     Object.assign(this, copy);
@@ -84,6 +85,7 @@ export class WeatherResponse {
   name?: string;
   cod?: string;
   favourite?: boolean;
+  key?: string;
 
   constructor(copy?: WeatherResponse) {
     Object.assign(this, copy);
