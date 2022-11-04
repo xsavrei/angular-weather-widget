@@ -34,9 +34,9 @@ export class IdbService {
     ])
   }
 
-  async getValue(storeName: StoreName, key?: string): Promise<any> {
+  async getGeolocationFromIdb(storeName: StoreName): Promise<any> {
     const db = await this.connect();
-    return await db.get(storeName, storeName === 'geolocation' ? 'geolocation' : (key ? key : ''));
+    return await db.get(storeName, 'geolocation');
   }
 
   async getAll(storeName: StoreName): Promise<any[]> {
