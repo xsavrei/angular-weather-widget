@@ -1,17 +1,19 @@
 <nav class="navbar navbar-dark bg-dark">
   <form class="d-flex align-self-center">
     <input #googleSearch ngx-google-places-autocomplete class="form-control align-self-center ms-1"
-           (onAddressChange)="onAddressChange($event)">
+           (onAddressChange)="onAddressChange($event)"
+           [disabled]="!citiesList.length"
+    data-cy="weather-search">
   </form>
   <span class="navbar-brand mb-0 h1">Weather Widget</span>
   <span class="navbar-text">
-     its only a header bar
+    its only a header bar
     </span>
 </nav>
 
 <div class="container-fluid">
   <div class="row">
-    <div class="col-lg-6">
+    <div class="col">
       <div class="d-flex justify-content-between align-items-center p-2 mt-1">
         <ngb-pagination [collectionSize]="citiesList.length"
                         [pageSize]="pageSize"
@@ -21,20 +23,20 @@
         <h5>Weather list</h5>
 
         <select class="form-select" [(ngModel)]="pageSize">
-          <option [ngValue]="5">5 items per page</option>
-          <option [ngValue]="10">10 items per page</option>
-          <option [ngValue]="15">15 items per page</option>
+          <option [ngValue]="5">5 items</option>
+          <option [ngValue]="10">10 items</option>
+          <option [ngValue]="15">15 items</option>
         </select>
       </div>
       <app-weather-card
         *ngFor="let weatherResponse of citiesList | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize"
-        [weather]="weatherResponse | async">
+        [weather]="weatherResponse">
       </app-weather-card>
-    </div>
-    <div class="col-12 col-md-6">
-      <button class="btn btn-danger" (click)="onDeleteClick()">
-        Delete data
-      </button>
+      <div class="button-block">
+        <button class="btn btn-danger mt-2" (click)="onDeleteClick()">
+          Delete all data
+        </button>
+      </div>
     </div>
   </div>
 </div>

@@ -1,3 +1,7 @@
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
+@import 'bootstrap/scss/mixins';
+
 .container-fluid {
   max-width: 1800px;
   padding: 0.5rem 1.25rem 2rem;
@@ -9,4 +13,21 @@
 
 .navbar-brand {
   padding-left: 1rem;
+}
+
+.button-block {
+  text-align: right;
+}
+
+@include media-breakpoint-down(sm) {
+  .navbar span {
+    display: none;
+  }
+}
+
+@include media-breakpoint-up(sm) {
+  .container-fluid {
+    max-width: 60%;
+    margin: auto;
+  }
 }

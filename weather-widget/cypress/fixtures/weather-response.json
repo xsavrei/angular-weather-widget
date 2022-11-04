@@ -1,0 +1,43 @@
+{
+  "coord": {
+    "lon": 17.1639,
+    "lat": 48.1427
+  },
+  "weather": [
+    {
+      "id": 804,
+      "main": "Clouds",
+      "description": "overcast clouds",
+      "icon": "https://cdn.glitch.com/6e8889e5-7a72-48f0-a061-863548450de5%2F04d.png?1499366020964"
+    }
+  ],
+  "base": "stations",
+  "main": {
+    "temp": 10.55,
+    "feels_like": 10.01,
+    "temp_min": 9.91,
+    "temp_max": 11.68,
+    "pressure": 1008,
+    "humidity": 90
+  },
+  "visibility": 6000,
+  "wind": {
+    "speed": 3.6,
+    "deg": 110
+  },
+  "clouds": {
+    "all": 100
+  },
+  "dt": 1667553869,
+  "sys": {
+    "type": 2,
+    "id": 2044188,
+    "country": "SK",
+    "sunrise": 1667540447,
+    "sunset": 1667575738
+  },
+  "timezone": 3600,
+  "id": 3060972,
+  "name": "Bratislava",
+  "cod": 200
+}

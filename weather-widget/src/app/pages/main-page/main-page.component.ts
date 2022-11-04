@@ -1,24 +1,24 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ApiService } from "../../services/api.service";
 import { GeolocationService } from "../../services/geolocation.service";
-import { Observable } from "rxjs";
 import { CustomGeolocation, WeatherResponse } from "../../domain";
 import { IdbService } from "../../services/idb.service";
 import { map } from "rxjs/operators";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: 'app-main-page',
   templateUrl: './main-page.component.html',
   styleUrls: ['./main-page.component.scss']
 })
-export class MainPageComponent {
+export class MainPageComponent implements OnInit{
 
-  citiesList = new Array<Observable<WeatherResponse>>();
+  citiesList = new Array<WeatherResponse>();
 
   page: number = 1;
   pageSize: number = 5;
 
-  currentTimestamp = new Date().getTime();
 
   @ViewChild('googleSearch')
   el?: ElementRef;
@@ -26,76 +26,68 @@ export class MainPageComponent {
   constructor(private api: ApiService,
               private geolocationService: GeolocationService,
               private idb: IdbService) {
-    let weatherResponse$: Observable<WeatherResponse>;
-    this.idb.getValue('geolocation').then(resolved => {
 
-      geolocationService.getLocationOnce().then(geolocation => {
+  }
 
-        const geo: CustomGeolocation = new CustomGeolocation({
-          lat: geolocation.coords.latitude,
-          lon: geolocation.coords.longitude,
-          timestamp: geolocation.timestamp
-        });
-        this.idb.insertGeoValue('geolocation', geo);
-        weatherResponse$ = this.api.getWeatherByCoords(geo);
-        this.citiesList.push(weatherResponse$.pipe(map((weatherResponse: WeatherResponse) => {
-          return { ...weatherResponse, favourite: true }
-        })));
-
-      }).catch(console.warn);
-    });
+  ngOnInit(): void {
+    this.idb.getGeolocationFromIdb('geolocation').then(resolved => {
+      const currentTimestamp = Date.now();
+      if ((currentTimestamp - resolved.timestamp > this.convertHoursToMs(24))) {
+        this.getDefaultWeather();
+      } else {
+        this.getFavouriteWeatherFromIdb().then(res => {
+          if (res) {
+            this.citiesList.push(res);
+          }
+        })
+      }
+    }).catch(() => this.getDefaultWeather());
   }
 
   onAddressChange(address: any) {
     const prevLength = this.citiesList.length;
     if (address.geometry.location.lat() && address.geometry.location.lng()) {
-      this.citiesList.push(this.api.getWeatherByCoords({
-          lat: address.geometry.location.lat(),
-          lon: address.geometry.location.lng()
-        })
-      );
-      if (prevLength < this.citiesList.length) {
-        this.el ? this.el.nativeElement.value = '' : this.el;
-      }
+      this.api.getWeatherByCoords({
+        lat: address.geometry.location.lat(),
+        lon: address.geometry.location.lng()
+      }).pipe(untilDestroyed(this)).subscribe(res => {
+        this.citiesList.push(res);
+        if (prevLength < this.citiesList.length) {
+          this.el ? this.el.nativeElement.value = '' : this.el;
+        }
+      });
     }
   }
 
-//FOR DEVELOPMENT
-  /* getCitiesListMock() {
-     let mock = new WeatherResponse({
-       weather: new Array<Weather>(new Weather({
-         id: 1,
-         main: 'main',
-         description: 'description',
-         icon: 'assets/loading.gif'
-       })),
-       coord: new CustomGeolocation({
-         lat: 15,
-         lon: 45,
-       }),
-       base: 'base',
-       main: new MainWeatherParams({
-         temp: 15,
-         feels_like: 17,
-         temp_max: 20,
-         temp_min: 12,
-         pressure: 1000
-       }),
-       visibility: 10000,
-       wind: new Wind(),
-       clouds: new Clouds(),
-       dt: 10,
-       sys: new System(),
-       timezone: 3600,
-       name: 'cityName',
-       cod: '200'
-     });
-     for (let i = 0; i < 5; i++) {
-       const mockDiffName = { ...mock, name: 'cityName' + i };
-       this.citiesList.push(of(mockDiffName));
-     }
-     return this.citiesList
-   }*/
+  getDefaultWeather() {
+    this.geolocationService.getLocationOnce().then(geolocation => {
+
+      const geo: CustomGeolocation = new CustomGeolocation({
+        lat: geolocation.coords.latitude,
+        lon: geolocation.coords.longitude,
+        timestamp: geolocation.timestamp
+      });
+      this.idb.insertGeoValue('geolocation', geo);
+      this.api.getWeatherByCoords(geo).pipe(untilDestroyed(this),
+        map((weatherResponse: WeatherResponse) => {
+          return { ...weatherResponse, favourite: true }
+        })).subscribe(res => {
+        this.citiesList.push(res);
+      });
+
+    }).catch(console.warn);
+  }
+
+  async getFavouriteWeatherFromIdb(): Promise<WeatherResponse | undefined> {
+    return await this.idb.getAll('weather').then((res: WeatherResponse[]) =>
+      res.find(weatherResponse => weatherResponse.favourite === true
+      )
+    );
+  }
+
+  convertHoursToMs(hours: number): number {
+    return hours * 60 * 60 * 1000; //hour to minute to second to millisecond
+  }
 
   onDeleteClick() {
     this.idb.deleteDb();
