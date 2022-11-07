@@ -1,7 +1,7 @@
 <nav class="navbar navbar-dark bg-dark">
   <form class="d-flex align-self-center">
     <input #googleSearch ngx-google-places-autocomplete class="form-control align-self-center ms-1"
-           (onAddressChange)="handleAddressChange($event)"
+           (onAddressChange)="onAddressChange($event)"
            [disabled]="!citiesList.length"
     data-cy="weather-search">
   </form>

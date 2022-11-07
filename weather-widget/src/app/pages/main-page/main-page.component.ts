@@ -44,7 +44,7 @@ export class MainPageComponent implements OnInit{
     }).catch(() => this.getDefaultWeather());
   }
 
-  handleAddressChange(address: any) {
+  onAddressChange(address: any) {
     const prevLength = this.citiesList.length;
     if (address.geometry.location.lat() && address.geometry.location.lng()) {
       this.api.getWeatherByCoords({
